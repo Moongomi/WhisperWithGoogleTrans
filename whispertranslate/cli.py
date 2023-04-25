@@ -19,11 +19,11 @@ def translate_separate(srt,translang):
             index=sub.index,
             start=sub.start,
             end=sub.end,
-            text=sub.text + '\n' + translation.text
+            text=translation.text
         )
         new_subs.append(new_sub)
 
-    new_subs.save(srt[:-4] + 'translated.srt', encoding='utf-8')
+    new_subs.save(srt[:-4] + '_translated.srt', encoding='utf-8')
 
 def write_srt_file(subs, file, translang=None):
     translator = Translator() if translang else None
@@ -73,12 +73,14 @@ def main():
     model = whisper.load_model(model_name)
     for audio_path in args.pop("audio"):
         result = model.transcribe(audio_path, **args)
-        print(result["segments"])
         srt_path = os.path.join(output_dir, f"{audio_path[:-4]}.srt")
-
-        if translate_lang and dual_srt in ['Y', 'y']:
-            with open(srt_path, 'w', encoding="utf-8") as srt:
+        with open(srt_path, 'w', encoding="utf-8") as srt:
+            if translate_lang and dual_srt in ['Y', 'y']:
                 write_srt_file(result["segments"],srt,translate_lang)
+            else:
+                write_srt_file(result["segments"],srt)
+                if translate_lang:
+                    translate_separate(srt_path, translate_lang)
 
 if __name__ == '__main__':
     main()
