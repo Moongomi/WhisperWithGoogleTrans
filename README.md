@@ -57,6 +57,10 @@ pip install setuptools-rust
 
 ## Command-line usage
 
+change directory:
+
+    cd whispertranslate
+
 The following command will transcribe speech in audio files, using the `medium` model:
 
     python cli.py audio.flac audio.mp3 audio.wav --model medium
